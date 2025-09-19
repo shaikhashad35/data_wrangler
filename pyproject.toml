@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "data-wrangler"
+version = "0.1.0"
+description = "A tool to normalize contact data."
+authors = ["Your Name <your.email@example.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.9"
+pandas = "*"
+phonenumbers = "*"
+
+[tool.poetry.scripts]
+data-wrangler = "data_wrangler.cli:main"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
