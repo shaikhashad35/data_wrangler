@@ -44,18 +44,33 @@ class DateNormalizer(ColumnNormalizer):
             dob = dob.replace(delim, '/')
         dob = re.sub(r'\s+', ' ', dob)
         dob = dob.strip()
-        # Try custom rules for ambiguous numeric dates and two-digit years
-        match = re.match(r'^(\d{1,2})/(\d{1,2})/(\d{2,4})$', dob)
+        # Explicitly handle year length and apply business rules
+        # Match the input date string against the pattern for day/month/year
+        # ^(\d{1,2})/ matches 1 or 2 digits at the start of the string (day)
+        # /(\d{1,2})/ matches 1 or 2 digits after the first slash (month)
+        # /(\d+)$ matches 1 or more digits at the end of the string (year)
+        # Example matches: '09/09/2001', '9/9/9', '9/9/999'
+        match = re.match(r'^(\d{1,2})/(\d{1,2})/(\d+)$', dob)
         if match:
-            first, second, year = int(match.group(1)), int(match.group(2)), match.group(3)
-            if len(year) == 2:
-                year = int(year)
+            year_str = match.group(3)
+            # 1-digit year: left-pad and treat as 2-digit
+            if len(year_str) == 1:
+                year_str = year_str.zfill(2)
+            # 3-digit year: assume typo, map to 1900s
+            if len(year_str) == 3:
+                year_str = '19' + year_str[-2:]
+            # Now handle as 2- or 4-digit year
+            if len(year_str) == 2:
+                year = int(year_str)
                 if year <= self.pivot_year:
                     year += 2000
                 else:
                     year += 1900
+            elif len(year_str) == 4:
+                year = int(year_str)
             else:
-                year = int(year)
+                raise NormalizationError(f"Year must be 2 or 4 digits, got {len(year_str)} digits in '{dob}'")
+            first, second = int(match.group(1)), int(match.group(2))
             # If month > 12, treat as MM/DD/YYYY
             if second > 12:
                 month, day = first, second

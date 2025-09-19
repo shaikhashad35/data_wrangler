@@ -20,9 +20,16 @@ class TestDateNormalizer:
         ("09_09_2001", "2001-09-09"),  # Different delimiter, parsed as DD_MM_YYYY
         ("5th April 2004", "2004-04-05"), # Natural language, parsed as 5 April 2004
         ("  09 / 09 / 2001  ", "2001-09-09"), # Whitespace and fuzzy, parsed as DD/MM/YYYY
+        ("9/9/9", "2009-09-09"),      # 1-digit year, left-pad to 09, pivot < 25, so 2009
+        ("9/9/999", "1999-09-09"),    # 3-digit year, map to 1999
+        ("9/9/99999", None),            # 5-digit year, should raise error
     ])
     def test_valid_dates(self, normalizer, input_date, expected):
-        assert normalizer.normalize(input_date) == expected
+        if expected is None:
+            with pytest.raises(NormalizationError):
+                normalizer.normalize(input_date)
+        else:
+            assert normalizer.normalize(input_date) == expected
 
     @pytest.mark.parametrize("input_date", [
         "31/02/2001",  # Invalid date (Feb 31 does not exist)
