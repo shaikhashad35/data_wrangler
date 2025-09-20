@@ -12,13 +12,28 @@ Data Wrangler is a Python tool designed to normalize contact data from CSV files
 
 ## Setup
 
-### 1. Install Docker
-- Download Docker Desktop for Mac from: [https://www.docker.com/products/docker-desktop/](https://www.docker.com/products/docker-desktop/)
-- Follow the installation instructions and start Docker Desktop.
-- Verify installation:
+### 1. Docker Installation
+
+#### macOS/Windows
+- Download Docker Desktop from the official website: [https://www.docker.com/products/docker-desktop/](https://www.docker.com/products/docker-desktop/)
+- Follow the installation instructions provided for your operating system.
+- Start Docker Desktop and ensure it is running.
+- Verify the installation by running:
   ```bash
   docker --version
   ```
+
+#### Linux
+- Install Docker Engine by following the official guide: [https://docs.docker.com/engine/install/](https://docs.docker.com/engine/install/)
+- After installation, start the Docker service:
+  ```bash
+  sudo systemctl start docker
+  ```
+- Verify the installation by running:
+  ```bash
+  docker --version
+  ```
+- (Optional) To run Docker commands without `sudo`, follow the post-installation steps: [https://docs.docker.com/engine/install/linux-postinstall/](https://docs.docker.com/engine/install/linux-postinstall/)
 
 ### 2. Build the Docker Image
 From the project root directory, run:
